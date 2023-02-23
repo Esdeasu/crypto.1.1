@@ -54,6 +54,9 @@ export default {
       default: null,
     },
   },
+  emits: {
+    deleteTicker: null,
+  },
   computed: {
     normalizedGraph() {
       const maxValue = Math.max(...this.tickerGraph);
@@ -69,7 +72,7 @@ export default {
   },
   methods: {
     deleteTicker() {
-      this.$emit("delete-ticker");
+      this.$emit("deleteTicker");
     },
   },
 };

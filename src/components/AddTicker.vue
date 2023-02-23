@@ -18,7 +18,7 @@
         </div>
       </div>
     </div>
-    <add-button @click="add" :disabled="disabled" />
+    <add-button @add-tick="add" :disabled="disabled" />
   </section>
 </template>
 
@@ -39,7 +39,7 @@ export default {
   },
 
   emits: {
-    "add-ticker": (value) => typeof value === "string" && value.length > 0,
+    addTicker: (value) => typeof value === "string" && value.length > 0,
   },
 
   data() {
@@ -50,7 +50,7 @@ export default {
 
   methods: {
     add() {
-      this.$emit("add-ticker", this.ticker);
+      this.$emit("addTicker", this.ticker);
       this.ticker = "";
     },
   },
