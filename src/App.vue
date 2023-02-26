@@ -5,6 +5,7 @@
       <add-ticker
         @add-ticker="add"
         :disabled="toManyTickers"
+        :added-tickers="tickersWithNoPrice"
       />
       <template v-if="tickers.length">
           <hr class="w-full border-t border-gray-600 my-4" />
@@ -100,7 +101,7 @@
 </template>
 
 <script>
-import { subscribeToTicker, unsubscribeFromTicker } from "/src/api.js";
+import { subscribeToTicker, unsubscribeFromTicker } from "/src/api/api.js";
 import AddTicker from "../src/components/AddTicker.vue";
 import SelectedGraph from "./components/SelectedGraph.vue";
 import InfoTemplate from "../src/components/InfoTemplate.vue";
@@ -129,20 +130,14 @@ export default {
 
       confirmation: "",
 
+
       randomText:
         "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
     };
   },
   CONFIRMATION_TEXT: "OK",
 
-  async mounted() {
-    // Загрузка списка всех доступных криптовалют
-    const allCoins = await fetch(
-      `https://min-api.cryptocompare.com/data/all/coinlist?summary=true&api_key=f443e0447aa9c7a286bd23c279eade013b7ff8712d1b494ca665edc0004c44dd`
-    );
-    const data1 = await allCoins.json();
-
-    this.coins = Object.keys(data1.Data);
+  mounted() {
     window.addEventListener("resize", this.calculateMaxGraphElements);
   },
   beforeUnmount() {
@@ -173,6 +168,12 @@ export default {
     setInterval(this.updateTickers, 5000);
   },
   computed: {
+    tickersWithNoPrice() {
+      const ticersNoPrice = this.tickers.map((ticker) => {
+        return ticker.name;
+      });
+      return ticersNoPrice;
+    },
     isConfirmationCorrect() {
       return this.confirmation === this.$options.CONFIRMATION_TEXT;
     },

@@ -16,6 +16,12 @@
             placeholder="Например DOGE"
           />
         </div>
+        <label
+          v-if="warning"
+          for="wallet"
+          class="block text-sm font-medium text-red-700"
+          >Данной криптовалюты не существует или она уже добавлена</label
+        >
       </div>
     </div>
     <add-button @add-tick="add" :disabled="disabled" />
@@ -24,6 +30,7 @@
 
 <script>
 import AddButton from "../components/AddButton.vue";
+import { getCoins } from "../api/CoinsApi.js";
 
 export default {
   components: {
@@ -36,6 +43,13 @@ export default {
       required: false,
       default: false,
     },
+    addedTickers: {
+      type: Array,
+      required: false,
+      default() {
+        return [];
+      },
+    },
   },
 
   emits: {
@@ -45,13 +59,25 @@ export default {
   data() {
     return {
       ticker: "",
+      coins: [],
+      warning: false,
     };
   },
-
+  mounted() {
+    getCoins().then((value) => (this.coins = value));
+  },
   methods: {
     add() {
-      this.$emit("addTicker", this.ticker);
-      this.ticker = "";
+      if (
+        this.coins.includes(this.ticker) &&
+        !this.addedTickers.includes(this.ticker)
+      ) {
+        this.$emit("addTicker", this.ticker);
+        this.ticker = "";
+        this.warning = false;
+      } else {
+        this.warning = true;
+      }
     },
   },
 };
