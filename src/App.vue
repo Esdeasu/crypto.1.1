@@ -31,7 +31,7 @@
       <info-template
       ref="confirmationPopup"
       >
-        {{ randomText }}
+        {{ $options.RANDOM_TEXT }}
         <template #actions="{ confirm }">
           Напишите
           <input :placeholder="$options.CONFIRMATION_TEXT" v-model="confirmation" />
