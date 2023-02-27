@@ -9,6 +9,7 @@
           <input
             v-model="ticker"
             @keydown.enter="add"
+            :disabled="disabled"
             type="text"
             name="wallet"
             id="wallet"
@@ -16,12 +17,12 @@
             placeholder="Например DOGE"
           />
         </div>
-        <label
-          v-if="warning"
-          for="wallet"
-          class="block text-sm font-medium text-red-700"
-          >Данной криптовалюты не существует или она уже добавлена</label
-        >
+        <label v-if="warning" class="block text-sm font-medium text-red-700">
+          Данной криптовалюты не существует или она уже добавлена
+        </label>
+        <label v-if="disabled" class="block text-sm font-medium text-red-700">
+          Добавлено максимальное количество криптовалют
+        </label>
       </div>
     </div>
     <add-button @add-tick="add" :disabled="disabled" />
@@ -29,7 +30,7 @@
 </template>
 
 <script>
-import AddButton from "../components/AddButton.vue";
+import AddButton from "../atoms/AddButton.vue";
 import { getCoins } from "../api/CoinsApi.js";
 
 export default {
@@ -38,11 +39,13 @@ export default {
   },
 
   props: {
+    // Состояние активности кнопки
     disabled: {
       type: Boolean,
       required: false,
       default: false,
     },
+    // Список добавленных криптовалют
     addedTickers: {
       type: Array,
       required: false,
@@ -53,20 +56,23 @@ export default {
   },
 
   emits: {
+    //Добавление тикера
     addTicker: (value) => typeof value === "string" && value.length > 0,
   },
 
   data() {
     return {
-      ticker: "",
-      coins: [],
-      warning: false,
+      ticker: "", //Название криптовалюты
+      coins: [], //Список всех доступных криптовалют
+      warning: false, //Флаг для вывода уведомления о невозможности довабить криптовалюту
     };
   },
   mounted() {
+    //Получение всех доступных для добавления криптовалют
     getCoins().then((value) => (this.coins = value));
   },
   methods: {
+    //Проверка возможности добавления криптовалюты и добавление криптовалюты
     add() {
       if (
         this.coins.includes(this.ticker) &&
@@ -77,6 +83,14 @@ export default {
         this.warning = false;
       } else {
         this.warning = true;
+      }
+    },
+  },
+  watch: {
+    //Убирает предупреждение если строка пуста
+    ticker() {
+      if (this.ticker === "") {
+        this.warning = false;
       }
     },
   },

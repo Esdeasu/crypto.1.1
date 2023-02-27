@@ -19,22 +19,24 @@ export default {
   popupController: null,
   data() {
     return {
-      isOpen: false,
+      isOpen: false, //Флаг состояния модального окна
     };
   },
   mounted() {
+    //Подписка на отслеживание нажатия кнопки
     document.addEventListener("keydown", this.handleKeydown);
   },
   beforeUnmount() {
+    //Отписка на отслеживание нажатия кнопки
     document.removeEventListener("keydown", this.handleKeydown);
   },
   methods: {
+    //Вызывает метод закрытия модального окна при нажатии на Escape
     handleKeydown(e) {
       if (this.isOpen && e.key === "Escape") {
         this.close();
       }
     },
-
     open() {
       let resolve;
       let reject;
@@ -48,12 +50,10 @@ export default {
 
       return popupPromise;
     },
-
     confirm() {
       this.$options.popupController.resolve(true);
       this.isOpen = false;
     },
-
     close() {
       this.$options.popupController.resolve(false);
       this.isOpen = false;
@@ -73,12 +73,10 @@ export default {
   background-color: white;
   border-radius: 10px;
 }
-
 .popup h1 {
   text-align: center;
   margin: 0;
 }
-
 .backdrop {
   position: fixed;
   top: 0;
@@ -88,7 +86,6 @@ export default {
   background-color: rgba(0, 0, 0, 0.8);
   z-index: 100;
 }
-
 .footer {
   text-align: right;
 }

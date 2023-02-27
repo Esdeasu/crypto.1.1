@@ -43,11 +43,13 @@
 <script>
 export default {
   props: {
+    //Выбранный в данный момент тикер
     selTicker: {
       type: Object,
       reuired: false,
       default: null,
     },
+    //Массив цен выбранного тикера
     tickerGraph: {
       type: Array,
       reuired: false,
@@ -55,9 +57,11 @@ export default {
     },
   },
   emits: {
+    //Отмена выбранного тикера
     deleteTicker: null,
   },
   computed: {
+    // Настройка отображения графика
     normalizedGraph() {
       const maxValue = Math.max(...this.tickerGraph);
       const minValue = Math.min(...this.tickerGraph);
@@ -71,6 +75,7 @@ export default {
     },
   },
   methods: {
+    //Отмена выбранного тикера
     deleteTicker() {
       this.$emit("deleteTicker");
     },
