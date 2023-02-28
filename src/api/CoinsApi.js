@@ -7,6 +7,5 @@ export const getCoins = async () => {
   );
   const data1 = await allCoins.json();
   const result = Object.keys(data1.Data);
-  console.log(result);
   return result;
 };

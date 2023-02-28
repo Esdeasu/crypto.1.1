@@ -1,7 +1,7 @@
 <template>
-  <section v-if="selTicker" class="relative">
+  <section v-if="mainStore.selectedTicker" class="relative">
     <h3 class="text-lg leading-6 font-medium text-gray-900 my-8">
-      {{ selTicker.name }} - USD
+      {{ mainStore.selectedTicker.name }} - USD
     </h3>
     <div
       class="flex items-end border-gray-600 border-b border-l h-64"
@@ -41,35 +41,39 @@
   </section>
 </template>
 <script>
+import { mapStores } from "pinia";
+import { useMainStore } from "../store/newStore";
+import { watch } from "vue";
 export default {
-  props: {
-    //Выбранный в данный момент тикер
-    selTicker: {
-      type: Object,
-      reuired: false,
-      default: null,
-    },
-    //Массив цен выбранного тикера
-    tickerGraph: {
-      type: Array,
-      reuired: false,
-      default: null,
-    },
-  },
   emits: {
     //Отмена выбранного тикера
     deleteTicker: null,
   },
+  mounted() {
+    // Подписка на метод при изменении размеров окна браузера
+    window.document.addEventListener(
+      "resize",
+      this.calculateMaxGraphElements()
+    );
+  },
+  beforeUnmount() {
+    // Отписка на метод при изменении размеров окна браузера
+    window.document.removeEventListener(
+      "resize",
+      this.calculateMaxGraphElements()
+    );
+  },
   computed: {
+    ...mapStores(useMainStore),
     // Настройка отображения графика
     normalizedGraph() {
-      const maxValue = Math.max(...this.tickerGraph);
-      const minValue = Math.min(...this.tickerGraph);
+      const maxValue = Math.max(...this.mainStore.graph);
+      const minValue = Math.min(...this.mainStore.graph);
 
       if (maxValue === minValue) {
-        return this.tickerGraph.map(() => 50);
+        return this.mainStore.graph.map(() => 50);
       }
-      return this.tickerGraph.map(
+      return this.mainStore.graph.map(
         (price) => 5 + ((price - minValue) * 95) / (maxValue - minValue)
       );
     },
@@ -79,6 +83,30 @@ export default {
     deleteTicker() {
       this.$emit("deleteTicker");
     },
+    calculateMaxGraphElements() {
+      if (!this.$refs.graph) {
+        return;
+      }
+      //this.maxColumnWidth = this.$refs.graphElWidth[0].clientWidth;
+      this.maxGraphEl = this.$refs.graph.clientWidth / 38;
+    },
   },
+  setup() {
+    const main = useMainStore();
+    watch(
+      () => main.selectedTickesr,
+      () => {
+        main.graph = [];
+        //main.calculateMaxGraphElements(ref.graph);
+      }
+    );
+  },
+  // watch: {
+  //   // При изменении выбранной крипты очищает график
+  //   this.mainStore.subscribe(mutations, state) {
+  //     this.graph = [];
+  //     this.$nextTick().then(this.calculateMaxGraphElements);
+  //   },
+  // },
 };
 </script>

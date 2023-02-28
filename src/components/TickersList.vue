@@ -25,8 +25,8 @@
       :key="t.name"
       @click="selectTicker(t)"
       :class="{
-        'border-4': selTicker === t,
-        'bg-red-100': t.price === '-',
+        'border-4': mainStore.selectedTicker === t,
+        //'bg-red-100': mainStore.selectedTicker.price === '-',
       }"
       class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
     >
@@ -37,7 +37,9 @@
 </template>
 
 <script>
+import { mapStores } from "pinia";
 import TickerCard from "../atoms/TickerCard.vue";
+import { useMainStore } from "../store/newStore";
 
 export default {
   components: {
@@ -56,13 +58,10 @@ export default {
   emits: {
     //Удаление тикера
     delTicker: null,
-    //Делает активным выбранный тикер
-    selectTicker: null,
   },
   data() {
     return {
       filter: "", //Строка фильтра
-      selTicker: null, //Текущий выбранный тикер
       page: 1, //Текущая страница списка тикеров
     };
   },
@@ -79,6 +78,7 @@ export default {
     }
   },
   computed: {
+    ...mapStores(useMainStore),
     //Форматирование цены криптовалюты
     formatPrice(price) {
       if (typeof price !== "number") {
@@ -123,8 +123,7 @@ export default {
     },
     //Делает активным выбранный тикер
     selectTicker(t) {
-      this.selTicker = t;
-      this.$emit("selectTicker", this.selTicker);
+      this.mainStore.selectedTicker = t;
     },
   },
   watch: {

@@ -9,15 +9,11 @@
       />
       <tickers-list
         v-if="tickers.length"
-        @select-ticker="select"
         @del-ticker="handleDelete"
         :get-tickers="tickers"
       />
       <selected-graph
-      @delete-ticker="selectedTicker=null"
-      :selTicker="selectedTicker"
-      :tickerGraph="graph"
-      ref="graph"
+      @delete-ticker="mainStore.selectedTicker=null"
       />
       <div class="flex flex-row h-fit">
         <p class="mr-5 inline-flex items-center">Информационная панель</p>
@@ -46,6 +42,8 @@
 <script>
 import { subscribeToTicker, unsubscribeFromTicker } from "../src/api/api";
 import { getCoins } from "./api/CoinsApi";
+import { useMainStore } from "./store/newStore";
+import { mapStores } from "pinia";
 import AddTicker from "../src/components/AddTicker.vue";
 import SelectedGraph from "./components/SelectedGraph.vue";
 import InfoTemplate from "../src/components/InfoTemplate.vue";
@@ -62,8 +60,6 @@ export default {
   data() {
     return {
       tickers: [], //массив добавленных криптовалют
-      selectedTicker: null, //выбранная в данный момент криптовалюта
-      graph: [], //график выбранной в данный моменткриптовалюты
       coins: [], //массив с всеми возможными криптовалютами
       maxGraphEl: 1, //колличество возможных столбцов в графе
       maxColumnWidth: 19, //ширина столбца в графе
@@ -78,12 +74,6 @@ export default {
   mounted() {
     // Загрузка списка всех доступных криптовалют
     getCoins().then((value) => (this.coins = value));
-    // Подписка на метод при изменении размеров окна браузера
-    window.addEventListener("resize", this.calculateMaxGraphElements);
-  },
-  beforeUnmount() {
-    // Отписка на метод при изменении размеров окна браузера
-    window.removeEventListener("resize", this.calculateMaxGraphElements);
   },
   created() {
     //Загрузка добавленных тикеров из локального хранилища
@@ -101,6 +91,7 @@ export default {
     setInterval(this.updateTickers, 5000);
   },
   computed: {
+    ...mapStores(useMainStore),
     //Список добавленных тикеров без цены
     tickersWithNoPrice() {
       const ticks = this.tickers.map((value) => {
@@ -126,23 +117,15 @@ export default {
         alert("Confirmed!");
       }
     },
-    // Расчёт максимального числа столбцов в графе
-    calculateMaxGraphElements() {
-      if (!this.$refs.graph.$refs.graph) {
-        return;
-      }
-      //this.maxColumnWidth = this.$refs.graphElWidth[0].clientWidth;
-      this.maxGraphEl = this.$refs.graph.$refs.graph.clientWidth / 38;
-    },
     // Работа с графом
     updateTicker(tickerName, price) {
       this.tickers
         .filter((t) => t.name === tickerName)
         .forEach((t) => {
-          if (t === this.selectedTicker) {
-            this.graph.push(price);
-            while (this.graph.length > this.maxGraphEl) {
-              this.graph.shift();
+          if (t === this.mainStore.selectedTicker) {
+            this.mainStore.graph.push(price);
+            while (this.mainStore.graph.length > this.mainStore.maxGraphEl) {
+              this.mainStore.graph.shift();
             }
           }
           t.price = price;
@@ -160,15 +143,11 @@ export default {
         this.updateTicker(currentTicker.name, newPrice)
       );
     },
-    //Выбор криптовалюты
-    select(ticker) {
-      this.selectedTicker = ticker;
-    },
     // Удаление крипты
     handleDelete(tickerToRemove) {
       this.tickers = this.tickers.filter((t) => t !== tickerToRemove);
-      if (this.selectedTicker === tickerToRemove) {
-        this.selectedTicker = null;
+      if (this.mainStore.selectedTicker === tickerToRemove) {
+        this.mainStore.selectedTicker = null;
       }
       unsubscribeFromTicker(tickerToRemove.name);
     },
@@ -177,11 +156,6 @@ export default {
     //Обновление локального хранилища
     tickers() {
       localStorage.setItem("cryptonomicon-list", JSON.stringify(this.tickers));
-    },
-    //При изменении выбранной крипты очищает график
-    selectedTicker() {
-      this.graph = [];
-      this.$nextTick().then(this.calculateMaxGraphElements);
     },
   },
 };
