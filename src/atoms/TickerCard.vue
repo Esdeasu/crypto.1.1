@@ -7,7 +7,7 @@
       {{ singleTicker.name }} - USD
     </dt>
     <dd class="mt-1 text-3xl font-semibold text-gray-900">
-      {{ singleTicker.price }}
+      {{ formatPrice(singleTicker.price) }}
     </dd>
   </div>
   <div class="w-full border-t border-gray-200"></div>
@@ -48,6 +48,13 @@ export default {
     delTicker: null,
   },
   methods: {
+    // Форматирование цены
+    formatPrice(price) {
+      if (price === "-") {
+        return price;
+      }
+      return price > 1 ? price.toFixed(2) : price.toPrecision(2);
+    },
     //Удаление тикера
     deleteTicker(ticker) {
       this.$emit("delTicker", ticker);
