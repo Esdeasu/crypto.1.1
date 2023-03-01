@@ -7,5 +7,9 @@ export const useMainStore = defineStore("main", {
     maxGraphEl: 1,
   }),
   getters: {},
-  actions: {},
+  actions: {
+    clearGraph() {
+      this.graph = [];
+    },
+  },
 });

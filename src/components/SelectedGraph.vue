@@ -1,11 +1,62 @@
+<script setup>
+import { useMainStore } from "../store/newStore";
+import { watch, computed, onUpdated, onUnmounted, ref, nextTick } from "vue";
+
+const emit = defineEmits(["deleteTicker"]);
+const main = useMainStore();
+const graphWidth = ref({});
+
+onUpdated(() => {
+  // Подписка на метод при изменении размеров окна браузера
+  window.addEventListener("resize", calculateMaxGraphElements());
+});
+onUnmounted(() => {
+  // Отписка на метод при изменении размеров окна браузера
+  window.removeEventListener("resize", calculateMaxGraphElements());
+});
+// Настройка отображения графика
+const normalizedGraph = computed(() => {
+  const maxValue = Math.max(...main.graph);
+  const minValue = Math.min(...main.graph);
+
+  if (maxValue === minValue) {
+    return main.graph.map(() => 50);
+  }
+  return main.graph.map(
+    (price) => 5 + ((price - minValue) * 95) / (maxValue - minValue)
+  );
+});
+
+//Отмена выбранного тикера
+function deleteTicker() {
+  emit("deleteTicker");
+}
+function calculateMaxGraphElements() {
+  if (!graphWidth.value || !graphWidth.value.clientWidth) {
+    return;
+  }
+  console.log(graphWidth.value.clientWidth);
+  //this.maxColumnWidth = this.$refs.graphElWidth[0].clientWidth;
+  main.maxGraphEl = graphWidth.value.clientWidth / 38;
+}
+
+// Очищает график при смене выбранного тикера
+watch(
+  () => main.selectedTicker,
+  () => {
+    main.clearGraph();
+    nextTick(() => calculateMaxGraphElements());
+  }
+);
+</script>
 <template>
-  <section v-if="mainStore.selectedTicker" class="relative">
+  <section v-if="main.selectedTicker" class="relative">
     <h3 class="text-lg leading-6 font-medium text-gray-900 my-8">
-      {{ mainStore.selectedTicker.name }} - USD
+      {{ main.selectedTicker.name }} - USD
     </h3>
     <div
       class="flex items-end border-gray-600 border-b border-l h-64"
-      ref="graph"
+      ref="graphWidth"
     >
       <div
         v-for="(bar, idx) in normalizedGraph"
@@ -40,73 +91,3 @@
     </button>
   </section>
 </template>
-<script>
-import { mapStores } from "pinia";
-import { useMainStore } from "../store/newStore";
-import { watch } from "vue";
-export default {
-  emits: {
-    //Отмена выбранного тикера
-    deleteTicker: null,
-  },
-  mounted() {
-    // Подписка на метод при изменении размеров окна браузера
-    window.document.addEventListener(
-      "resize",
-      this.calculateMaxGraphElements()
-    );
-  },
-  beforeUnmount() {
-    // Отписка на метод при изменении размеров окна браузера
-    window.document.removeEventListener(
-      "resize",
-      this.calculateMaxGraphElements()
-    );
-  },
-  computed: {
-    ...mapStores(useMainStore),
-    // Настройка отображения графика
-    normalizedGraph() {
-      const maxValue = Math.max(...this.mainStore.graph);
-      const minValue = Math.min(...this.mainStore.graph);
-
-      if (maxValue === minValue) {
-        return this.mainStore.graph.map(() => 50);
-      }
-      return this.mainStore.graph.map(
-        (price) => 5 + ((price - minValue) * 95) / (maxValue - minValue)
-      );
-    },
-  },
-  methods: {
-    //Отмена выбранного тикера
-    deleteTicker() {
-      this.$emit("deleteTicker");
-    },
-    calculateMaxGraphElements() {
-      if (!this.$refs.graph) {
-        return;
-      }
-      //this.maxColumnWidth = this.$refs.graphElWidth[0].clientWidth;
-      this.maxGraphEl = this.$refs.graph.clientWidth / 38;
-    },
-  },
-  setup() {
-    const main = useMainStore();
-    watch(
-      () => main.selectedTickesr,
-      () => {
-        main.graph = [];
-        //main.calculateMaxGraphElements(ref.graph);
-      }
-    );
-  },
-  // watch: {
-  //   // При изменении выбранной крипты очищает график
-  //   this.mainStore.subscribe(mutations, state) {
-  //     this.graph = [];
-  //     this.$nextTick().then(this.calculateMaxGraphElements);
-  //   },
-  // },
-};
-</script>
