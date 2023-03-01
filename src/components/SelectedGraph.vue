@@ -10,10 +10,12 @@ onUpdated(() => {
   // Подписка на метод при изменении размеров окна браузера
   window.addEventListener("resize", calculateMaxGraphElements());
 });
+
 onUnmounted(() => {
   // Отписка на метод при изменении размеров окна браузера
   window.removeEventListener("resize", calculateMaxGraphElements());
 });
+
 // Настройка отображения графика
 const normalizedGraph = computed(() => {
   const maxValue = Math.max(...main.graph);
@@ -31,11 +33,11 @@ const normalizedGraph = computed(() => {
 function deleteTicker() {
   emit("deleteTicker");
 }
+//Расчёт максимального количества столбцов в графе
 function calculateMaxGraphElements() {
   if (!graphWidth.value || !graphWidth.value.clientWidth) {
     return;
   }
-  console.log(graphWidth.value.clientWidth);
   //this.maxColumnWidth = this.$refs.graphElWidth[0].clientWidth;
   main.maxGraphEl = graphWidth.value.clientWidth / 38;
 }

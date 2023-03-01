@@ -26,7 +26,6 @@
       @click="selectTicker(t)"
       :class="{
         'border-4': mainStore.selectedTicker === t,
-        //'bg-red-100': mainStore.selectedTicker.price === '-',
       }"
       class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
     >

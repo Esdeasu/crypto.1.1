@@ -1,5 +1,8 @@
 <template>
-  <div class="px-4 py-5 sm:p-6 text-center">
+  <div
+    :class="{ 'bg-red-100': singleTicker.price === '-' }"
+    class="px-4 py-5 sm:p-6 text-center"
+  >
     <dt class="text-sm font-medium text-gray-500 truncate">
       {{ singleTicker.name }} - USD
     </dt>
