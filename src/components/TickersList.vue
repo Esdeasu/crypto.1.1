@@ -1,35 +1,42 @@
 <template>
   <hr class="w-full border-t border-gray-600 my-4" />
   <div class="flex flex-row mb-2">
-    <div class="self-center">Страница: {{ page }}</div>
+    <div class="self-center dark:text-gray-300">Страница: {{ page }}</div>
     <button
-      class="self-center mx-5 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+      class="self-center h-8 ml-2 my-1 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:hover:text-white"
       v-if="page > 1"
       @click="page = page - 1"
     >
       Назад
     </button>
     <button
-      class="self-center mx-5 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+      class="self-center h-8 ml-2 my-1 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:hover:text-white"
       @click="page = page + 1"
       v-if="hasNextPage"
     >
       Вперед
     </button>
   </div>
-  <div class="h-fit self-center">Фильтр: <input v-model="filter" /></div>
+  <div class="h-fit self-center dark:text-gray-300">
+    Фильтр:
+    <input
+      v-model="filter"
+      class="w-100 p-1 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+    />
+  </div>
   <hr class="w-full border-t border-gray-600 my-4" />
   <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
     <div
       v-for="t in paginatedTickers"
       :key="t.name"
       @click="selectTicker(t)"
-      :class="{
-        'border-4': mainStore.selectedTicker === t,
-      }"
-      class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
+      class="overflow-visible shadow rounded-md border-solid cursor-pointer"
     >
-      <ticker-card @del-ticker="deleteTicker" :single-ticker="t" />
+      <ticker-card
+        @del-ticker="deleteTicker"
+        :single-ticker="t"
+        :sel-tick="mainStore.selectedTicker"
+      />
     </div>
   </dl>
   <hr class="w-full border-t border-gray-600 my-4" />
