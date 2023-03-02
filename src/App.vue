@@ -1,26 +1,24 @@
 <!-- eslint-disable prettier/prettier -->
 <template>
-  <div class="h-screen w-full flex flex-col items-center p-4 dark:bg-gray-900">
-    <div class="container" >
+    <div class="h-full w-full overflow-hidden flex flex-col items-left p-4 dark:bg-gray-900">
       <div class="w-full flex flex-row justify-between">
         <add-ticker
           @add-ticker="add"
           :disabled="toManyTickers"
           :added-tickers="tickersWithNoPrice"
         />
-        <theme-button
-        />
+        <theme-button />
       </div>
       <tickers-list
         v-if="tickers.length"
         @del-ticker="handleDelete"
         :get-tickers="tickers"
       />
-      <selected-graph
-      @delete-ticker="mainStore.selectedTicker=null"
-      />
-      <div class="flex flex-row h-fit">
-        <p class="mr-5 inline-flex items-center dark:text-white">Информационная панель</p>
+      <selected-graph @delete-ticker="mainStore.selectedTicker = null" />
+      <div class="flex flex-row h-fit items-left">
+        <p class="mr-5 inline-flex items-center dark:text-white">
+          Информационная панель
+        </p>
           <button
             @click="openPopup"
             class="my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600"
@@ -40,7 +38,6 @@
         </template>
       </info-template>
     </div>
-  </div>
 </template>
 
 <script>

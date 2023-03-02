@@ -17,7 +17,7 @@
       Вперед
     </button>
   </div>
-  <div class="h-fit self-center dark:text-gray-300">
+  <div class="h-fit dark:text-gray-300">
     Фильтр:
     <input
       v-model="filter"
