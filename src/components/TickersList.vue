@@ -1,21 +1,51 @@
 <template>
   <hr class="w-full border-t border-gray-600 my-2" />
-  <div class="flex flex-row mb-2">
-    <div class="self-center mr-2 dark:text-gray-300">Страница: {{ page }}</div>
-    <basic-button
-      v-if="page > 1"
-      @butt-click="page = page - 1"
-      :is-disabled="false"
-      button-name="Назад"
-    />
-    <basic-button
-      v-if="hasNextPage"
-      @butt-click="page = page + 1"
-      :is-disabled="false"
-      button-name="Вперед"
-    />
+  <div class="flex flex-row justify-between mb-2">
+    <div class="flex flex-row">
+      <div class="self-center mr-2 dark:text-gray-300">
+        Страница: {{ page }}
+      </div>
+      <basic-button
+        v-if="page > 1"
+        @butt-click="page = page - 1"
+        :is-disabled="false"
+        button-name="Назад"
+      />
+      <basic-button
+        v-if="hasNextPage"
+        @butt-click="page = page + 1"
+        :is-disabled="false"
+        button-name="Вперед"
+      />
+    </div>
+    <div class="flex flex-row h-full">
+      <p class="mr-5 inline-flex items-center dark:text-white">
+        Информационная панель
+      </p>
+      <basic-button
+        @butt-click="openPopup"
+        :is-disabled="false"
+        button-name="Развернуть"
+      />
+    </div>
+    <info-template ref="confirmationPopup">
+      {{ $options.RANDOM_TEXT }}
+      <template #actions="{ confirm }">
+        Напишите
+        <input
+          :placeholder="$options.CONFIRMATION_TEXT"
+          v-model="confirmation"
+        />
+        &nbsp;
+        <basic-button
+          @butt-click="confirm"
+          :is-disabled="false"
+          button-name="OK"
+        />
+      </template>
+    </info-template>
   </div>
-  <div class="h-fit dark:text-gray-300">
+  <div class="dark:text-gray-300">
     Фильтр:
     <input
       v-model="filter"
@@ -45,11 +75,13 @@ import { mapStores } from "pinia";
 import { useMainStore } from "../store/newStore";
 import TickerCard from "../atoms/TickerCard.vue";
 import BasicButton from "../atoms/BasicButton.vue";
+import InfoTemplate from "../components/InfoTemplate.vue";
 
 export default {
   components: {
     TickerCard,
     BasicButton,
+    InfoTemplate,
   },
   props: {
     //Список добавленных криптовалют
@@ -69,8 +101,14 @@ export default {
     return {
       filter: "", //Строка фильтра
       page: 1, //Текущая страница списка тикеров
+      confirmation: "", //строка подтверждения для работы с модальным окном
     };
   },
+  //Рандомный текст для передачи через слот
+  RANDOM_TEXT:
+    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
+  CONFIRMATION_TEXT: "OK", //Текст необходимый для выхода из модального окна
+
   created() {
     //Установка значений фильтра и страницы при загрузке
     const windowData = Object.fromEntries(
@@ -121,8 +159,20 @@ export default {
         page: this.page,
       };
     },
+    //Проверка правильности введённого текста в модальном окне
+    isConfirmationCorrect() {
+      return this.confirmation === this.$options.CONFIRMATION_TEXT;
+    },
   },
   methods: {
+    // Открытие модального окна
+    async openPopup() {
+      this.confirmation = "";
+      const popupResult = await this.$refs.confirmationPopup.open();
+      if (popupResult) {
+        alert("Confirmed!");
+      }
+    },
     //Удаление тикера
     deleteTicker(t) {
       this.$emit("delTicker", t);

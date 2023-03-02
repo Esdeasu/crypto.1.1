@@ -2,7 +2,7 @@
   <div class="dark:border-2 dark:border-gray-500">
     <div
       :class="{
-        'bg-red-100': singleTicker.price === '-',
+        'bg-red-100 dark:bg-red-900': singleTicker.price === '-',
         'dark:border-2': selTick === singleTicker,
       }"
       class="px-4 py-5 sm:p-6 text-center dark:bg-gray-700"

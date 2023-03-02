@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="h-full w-full overflow-hidden flex flex-col items-left p-4 dark:bg-gray-900"
-  >
+  <div class="h-full w-full flex flex-col items-left p-8 dark:bg-gray-900">
     <div class="w-full flex flex-row justify-between">
       <add-ticker
         @add-ticker="add"
@@ -20,32 +18,6 @@
       :get-tickers="tickers"
     />
     <selected-graph @delete-ticker="mainStore.selectedTicker = null" />
-    <div class="flex flex-row h-fit items-left">
-      <p class="mr-5 inline-flex items-center dark:text-white">
-        Информационная панель
-      </p>
-      <basic-button
-        @butt-click="openPopup"
-        :is-disabled="false"
-        button-name="Развернуть"
-      />
-    </div>
-    <info-template ref="confirmationPopup">
-      {{ $options.RANDOM_TEXT }}
-      <template #actions="{ confirm }">
-        Напишите
-        <input
-          :placeholder="$options.CONFIRMATION_TEXT"
-          v-model="confirmation"
-        />
-        &nbsp;
-        <basic-button
-          @butt-click="confirm"
-          :is-disabled="false"
-          button-name="OK"
-        />
-      </template>
-    </info-template>
   </div>
 </template>
 
@@ -57,7 +29,6 @@ import { mapStores } from "pinia";
 import { switchTheme } from "./composables/SwitchTheme";
 import AddTicker from "../src/components/AddTicker.vue";
 import SelectedGraph from "./components/SelectedGraph.vue";
-import InfoTemplate from "../src/components/InfoTemplate.vue";
 import TickersList from "./components/TickersList.vue";
 import BasicButton from "./atoms/BasicButton.vue";
 
@@ -66,7 +37,6 @@ export default {
   components: {
     AddTicker,
     SelectedGraph,
-    InfoTemplate,
     TickersList,
     BasicButton,
   },
@@ -74,13 +44,8 @@ export default {
     return {
       tickers: [], //массив добавленных криптовалют
       coins: [], //массив с всеми возможными криптовалютами
-      confirmation: "", //строка подтверждения для работы с модальным окном
     };
   },
-  //Рандомный текст для передачи через слот
-  RANDOM_TEXT:
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-  CONFIRMATION_TEXT: "OK", //Текст необходимый для выхода из модального окна
   beforeMount() {
     if (
       localStorage.getItem("color-theme") === "dark" ||
@@ -120,10 +85,6 @@ export default {
       });
       return ticks;
     },
-    //Проверка правильности введённого текста в модальном окне
-    isConfirmationCorrect() {
-      return this.confirmation === this.$options.CONFIRMATION_TEXT;
-    },
     //Флаг превышения максимального числа добавленных тикеров
     toManyTickers() {
       return this.tickers.length > 18;
@@ -131,16 +92,7 @@ export default {
   },
   methods: {
     darkMode() {
-      console.log("a");
       switchTheme();
-    },
-    // Открытие модального окна
-    async openPopup() {
-      this.confirmation = "";
-      const popupResult = await this.$refs.confirmationPopup.open();
-      if (popupResult) {
-        alert("Confirmed!");
-      }
     },
     // Работа с графом
     updateTicker(tickerName, price) {
