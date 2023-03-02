@@ -74,7 +74,7 @@ watch(
         :key="idx"
         :style="{ height: `${bar}%` }"
         ref="graphElWidth"
-        class="bg-gray-900 border w-10 dark:bg-gray-300 dark:border-gray-800"
+        class="bg-gray-600 border w-10 dark:bg-gray-300 dark:border-gray-800"
       ></div>
     </div>
     <button @click="deleteTicker" type="button" class="absolute top-0 right-0">

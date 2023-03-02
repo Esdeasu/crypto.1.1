@@ -1,21 +1,19 @@
 <template>
-  <hr class="w-full border-t border-gray-600 my-4" />
+  <hr class="w-full border-t border-gray-600 my-2" />
   <div class="flex flex-row mb-2">
-    <div class="self-center dark:text-gray-300">Страница: {{ page }}</div>
-    <button
-      class="self-center h-8 ml-2 my-1 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:hover:text-white"
+    <div class="self-center mr-2 dark:text-gray-300">Страница: {{ page }}</div>
+    <basic-button
       v-if="page > 1"
-      @click="page = page - 1"
-    >
-      Назад
-    </button>
-    <button
-      class="self-center h-8 ml-2 my-1 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:hover:text-white"
-      @click="page = page + 1"
+      @butt-click="page = page - 1"
+      :is-disabled="false"
+      button-name="Назад"
+    />
+    <basic-button
       v-if="hasNextPage"
-    >
-      Вперед
-    </button>
+      @butt-click="page = page + 1"
+      :is-disabled="false"
+      button-name="Вперед"
+    />
   </div>
   <div class="h-fit dark:text-gray-300">
     Фильтр:
@@ -24,7 +22,7 @@
       class="w-100 p-1 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
     />
   </div>
-  <hr class="w-full border-t border-gray-600 my-4" />
+  <hr class="w-full border-t border-gray-600 my-2" />
   <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
     <div
       v-for="t in paginatedTickers"
@@ -44,12 +42,14 @@
 
 <script>
 import { mapStores } from "pinia";
-import TickerCard from "../atoms/TickerCard.vue";
 import { useMainStore } from "../store/newStore";
+import TickerCard from "../atoms/TickerCard.vue";
+import BasicButton from "../atoms/BasicButton.vue";
 
 export default {
   components: {
     TickerCard,
+    BasicButton,
   },
   props: {
     //Список добавленных криптовалют

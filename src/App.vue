@@ -1,43 +1,52 @@
-<!-- eslint-disable prettier/prettier -->
 <template>
-    <div class="h-full w-full overflow-hidden flex flex-col items-left p-4 dark:bg-gray-900">
-      <div class="w-full flex flex-row justify-between">
-        <add-ticker
-          @add-ticker="add"
-          :disabled="toManyTickers"
-          :added-tickers="tickersWithNoPrice"
-        />
-        <theme-button />
-      </div>
-      <tickers-list
-        v-if="tickers.length"
-        @del-ticker="handleDelete"
-        :get-tickers="tickers"
+  <div
+    class="h-full w-full overflow-hidden flex flex-col items-left p-4 dark:bg-gray-900"
+  >
+    <div class="w-full flex flex-row justify-between">
+      <add-ticker
+        @add-ticker="add"
+        :disabled="toManyTickers"
+        :added-tickers="tickersWithNoPrice"
       />
-      <selected-graph @delete-ticker="mainStore.selectedTicker = null" />
-      <div class="flex flex-row h-fit items-left">
-        <p class="mr-5 inline-flex items-center dark:text-white">
-          Информационная панель
-        </p>
-          <button
-            @click="openPopup"
-            class="my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600"
-          >
-            Развернуть
-          </button>
-      </div>
-      <info-template
-      ref="confirmationPopup"
-      >
-        {{ $options.RANDOM_TEXT }}
-        <template #actions="{ confirm }">
-          Напишите
-          <input :placeholder="$options.CONFIRMATION_TEXT" v-model="confirmation" />
-          &nbsp;
-          <button @click="confirm" :disabled="!isConfirmationCorrect">OK</button>
-        </template>
-      </info-template>
+      <basic-button
+        @butt-click="darkMode"
+        :is-disabled="false"
+        button-name="Сменить тему"
+      />
     </div>
+    <tickers-list
+      v-if="tickers.length"
+      @del-ticker="handleDelete"
+      :get-tickers="tickers"
+    />
+    <selected-graph @delete-ticker="mainStore.selectedTicker = null" />
+    <div class="flex flex-row h-fit items-left">
+      <p class="mr-5 inline-flex items-center dark:text-white">
+        Информационная панель
+      </p>
+      <basic-button
+        @butt-click="openPopup"
+        :is-disabled="false"
+        button-name="Развернуть"
+      />
+    </div>
+    <info-template ref="confirmationPopup">
+      {{ $options.RANDOM_TEXT }}
+      <template #actions="{ confirm }">
+        Напишите
+        <input
+          :placeholder="$options.CONFIRMATION_TEXT"
+          v-model="confirmation"
+        />
+        &nbsp;
+        <basic-button
+          @butt-click="confirm"
+          :is-disabled="false"
+          button-name="OK"
+        />
+      </template>
+    </info-template>
+  </div>
 </template>
 
 <script>
@@ -45,11 +54,12 @@ import { subscribeToTicker, unsubscribeFromTicker } from "../src/api/api";
 import { getCoins } from "./api/CoinsApi";
 import { useMainStore } from "./store/newStore";
 import { mapStores } from "pinia";
+import { switchTheme } from "./composables/SwitchTheme";
 import AddTicker from "../src/components/AddTicker.vue";
 import SelectedGraph from "./components/SelectedGraph.vue";
 import InfoTemplate from "../src/components/InfoTemplate.vue";
 import TickersList from "./components/TickersList.vue";
-import ThemeButton from "./atoms/ThemeButton.vue";
+import BasicButton from "./atoms/BasicButton.vue";
 
 export default {
   name: "App",
@@ -58,7 +68,7 @@ export default {
     SelectedGraph,
     InfoTemplate,
     TickersList,
-    ThemeButton,
+    BasicButton,
   },
   data() {
     return {
@@ -120,6 +130,10 @@ export default {
     },
   },
   methods: {
+    darkMode() {
+      console.log("a");
+      switchTheme();
+    },
     // Открытие модального окна
     async openPopup() {
       this.confirmation = "";

@@ -27,17 +27,21 @@
         </label>
       </div>
     </div>
-    <add-button @add-tick="add" :disabled="disabled" />
+    <basic-button
+      @butt-click="add"
+      :is-disabled="false"
+      button-name="Добавить"
+    />
   </section>
 </template>
 
 <script>
-import AddButton from "../atoms/AddButton.vue";
+import BasicButton from "../atoms/BasicButton.vue";
 import { getCoins } from "../api/CoinsApi.js";
 
 export default {
   components: {
-    AddButton,
+    BasicButton,
   },
 
   props: {
