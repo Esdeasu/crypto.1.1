@@ -1,6 +1,15 @@
+<script setup>
+defineProps({
+  isDisabled: Boolean,
+  buttonName: String,
+});
+
+const emit = defineEmits(["buttClick"]);
+</script>
+
 <template>
   <button
-    @click="$emit('buttClick')"
+    @click="emit('buttClick')"
     type="button"
     :disabled="isDisabled"
     :class="{ 'opacity=50': isDisabled }"
@@ -9,23 +18,3 @@
     {{ buttonName }}
   </button>
 </template>
-
-<script>
-export default {
-  props: {
-    isDisabled: {
-      type: Boolean,
-      required: false,
-      default: true,
-    },
-    buttonName: {
-      type: String,
-      required: false,
-      default: "",
-    },
-  },
-  emits: {
-    buttClick: null,
-  },
-};
-</script>

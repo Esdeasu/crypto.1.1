@@ -1,3 +1,49 @@
+<script setup>
+import BasicButton from "../atoms/BasicButton.vue";
+import { getCoins } from "../api/CoinsApi.js";
+import { ref, onMounted, watch } from "vue";
+
+const props = defineProps({
+  // Состояние активности кнопки
+  disabled: Boolean,
+  // Список добавленных криптовалют
+  addedTickers: Array,
+});
+
+const emit = defineEmits(["addTicker"]);
+
+const ticker = ref(""); //Название криптовалюты
+const coins = ref([]); //Список всех доступных криптовалют
+const warning = ref(false); //Флаг для вывода уведомления о невозможности довабить криптовалюту
+
+onMounted(() => {
+  //Получение всех доступных для добавления криптовалют
+  getCoins().then((value) => (coins.value = value));
+});
+
+//Проверка возможности добавления криптовалюты и добавление криптовалюты
+function add() {
+  if (
+    coins.value.includes(ticker.value) &&
+    !props.addedTickers.includes(ticker.value)
+  ) {
+    emit("addTicker", ticker.value);
+    ticker.value = "";
+    warning.value = false;
+  } else {
+    warning.value = true;
+  }
+}
+watch(
+  () => ticker,
+  () => {
+    if (ticker.value === "") {
+      warning.value = false;
+    }
+  }
+);
+</script>
+
 <template>
   <section>
     <div class="flex">
@@ -34,71 +80,3 @@
     />
   </section>
 </template>
-
-<script>
-import BasicButton from "../atoms/BasicButton.vue";
-import { getCoins } from "../api/CoinsApi.js";
-
-export default {
-  components: {
-    BasicButton,
-  },
-
-  props: {
-    // Состояние активности кнопки
-    disabled: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    // Список добавленных криптовалют
-    addedTickers: {
-      type: Array,
-      required: false,
-      default() {
-        return [];
-      },
-    },
-  },
-
-  emits: {
-    //Добавление тикера
-    addTicker: (value) => typeof value === "string" && value.length > 0,
-  },
-
-  data() {
-    return {
-      ticker: "", //Название криптовалюты
-      coins: [], //Список всех доступных криптовалют
-      warning: false, //Флаг для вывода уведомления о невозможности довабить криптовалюту
-    };
-  },
-  mounted() {
-    //Получение всех доступных для добавления криптовалют
-    getCoins().then((value) => (this.coins = value));
-  },
-  methods: {
-    //Проверка возможности добавления криптовалюты и добавление криптовалюты
-    add() {
-      if (
-        this.coins.includes(this.ticker) &&
-        !this.addedTickers.includes(this.ticker)
-      ) {
-        this.$emit("addTicker", this.ticker);
-        this.ticker = "";
-        this.warning = false;
-      } else {
-        this.warning = true;
-      }
-    },
-  },
-  watch: {
-    //Убирает предупреждение если строка пуста
-    ticker() {
-      if (this.ticker === "") {
-        this.warning = false;
-      }
-    },
-  },
-};
-</script>

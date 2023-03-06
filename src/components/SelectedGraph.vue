@@ -53,14 +53,14 @@ watch(
 </script>
 
 <template>
-  <section v-if="main.selectedTicker">
-    <div class="flex flex-row justify-between">
+  <section v-if="main.selectedTicker" class="h-full">
+    <div class="h-1/4 min-h-50 flex flex-row justify-between">
       <h3
-        class="text-lg leading-6 font-medium text-gray-900 my-2 dark:text-gray-200"
+        class="h-full text-lg leading-6 font-medium text-gray-900 my-2 dark:text-gray-200"
       >
         {{ main.selectedTicker.name }} - USD
       </h3>
-      <button @click="deleteTicker" type="button">
+      <button @click="deleteTicker" type="button" class="h-full">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -85,7 +85,7 @@ watch(
       </button>
     </div>
     <div
-      class="flex items-end border-gray-600 border-b border-l h-56"
+      class="flex items-end border-gray-600 border-b border-l h-3/4"
       ref="graphWidth"
     >
       <div
@@ -93,7 +93,7 @@ watch(
         :key="idx"
         :style="{ height: `${bar}%` }"
         ref="graphElWidth"
-        class="bg-gray-600 border w-10 dark:bg-gray-300 dark:border-gray-800"
+        class="h-full min-h-fit bg-gray-600 border w-10 dark:bg-gray-300 dark:border-gray-800"
       ></div>
     </div>
   </section>

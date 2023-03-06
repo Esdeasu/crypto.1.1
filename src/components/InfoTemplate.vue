@@ -20,7 +20,6 @@
     </div>
   </div>
 </template>
-
 <script>
 export default {
   popupController: null,
@@ -51,10 +50,8 @@ export default {
         resolve = ok;
         reject = fail;
       });
-
       this.$options.popupController = { resolve, reject };
       this.isOpen = true;
-
       return popupPromise;
     },
     confirm() {

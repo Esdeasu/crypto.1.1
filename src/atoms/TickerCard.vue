@@ -1,3 +1,21 @@
+<script setup>
+defineProps({
+  //Получение тикера
+  singleTicker: Object,
+  //Выбранный в данный момент тикрер
+  selTick: Object,
+});
+
+const emit = defineEmits(["delTicker"]);
+
+//Форматирование цены
+function formatPrice(price) {
+  if (price === "-") {
+    return price;
+  }
+  return price > 1 ? price.toFixed(2) : price.toPrecision(2);
+}
+</script>
 <template>
   <div class="dark:border-2 dark:border-gray-500">
     <div
@@ -16,7 +34,7 @@
     </div>
     <div class="w-full border-t border-gray-300 dark:border-gray-600"></div>
     <button
-      @click.stop="deleteTicker(singleTicker)"
+      @click.stop="emit('delTicker', singleTicker)"
       class="flex items-center justify-center font-medium w-full bg-gray-100 px-4 py-4 sm:px-6 text-md text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:opacity-20 transition-all focus:outline-none dark:bg-gray-800 dark:hover:bg-gray-900 dark:hover:text-gray-600 dark:hover:opacity-100"
     >
       <svg
@@ -36,37 +54,3 @@
     </button>
   </div>
 </template>
-<script>
-export default {
-  props: {
-    //Получение тикера
-    singleTicker: {
-      type: Object,
-      required: false,
-      default() {
-        return {};
-      },
-    },
-    selTick: {
-      type: Object,
-    },
-  },
-  emits: {
-    //Удаление тикера
-    delTicker: null,
-  },
-  methods: {
-    // Форматирование цены
-    formatPrice(price) {
-      if (price === "-") {
-        return price;
-      }
-      return price > 1 ? price.toFixed(2) : price.toPrecision(2);
-    },
-    //Удаление тикера
-    deleteTicker(ticker) {
-      this.$emit("delTicker", ticker);
-    },
-  },
-};
-</script>

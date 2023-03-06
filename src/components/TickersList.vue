@@ -35,6 +35,7 @@
         <input
           :placeholder="$options.CONFIRMATION_TEXT"
           v-model="confirmation"
+          class="dark:text-black"
         />
         &nbsp;
         <basic-button
